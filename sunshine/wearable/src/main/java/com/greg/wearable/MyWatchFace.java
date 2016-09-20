@@ -26,9 +26,11 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
 import android.support.wearable.watchface.CanvasWatchFaceService;
 import android.support.wearable.watchface.WatchFaceStyle;
@@ -58,7 +60,7 @@ public class MyWatchFace extends CanvasWatchFaceService {
      */
     private static final long INTERACTIVE_UPDATE_RATE_MS = TimeUnit.SECONDS.toMillis(1);
 
-    private static final float TextScalingFactor = 0.8f;
+    private static final float TextScalingFactor = 0.6f;
     private static final float DateTextMinMargin = 10.0f;
 
     /**
@@ -279,15 +281,42 @@ public class MyWatchFace extends CanvasWatchFaceService {
                 //canvas.drawLine(20, 0, 0, 20, mDateTextPaint);
 
                 drawSeparatingLine(canvas, lineYStart, 100, bounds.width());
+
+
+                drawWeatherInformation(canvas, R.drawable.art_rain, 23, 19, bounds.width(),(int)lineYStart + 5);
+                /*Drawable d = ContextCompat.getDrawable(getBaseContext(), R.drawable.art_rain);
+                d.setBounds(30, (int)lineYStart + 5, 80, (int)lineYStart + 5 + 50);
+                d.draw(canvas);*/
             }
         }
+        public void drawWeatherInformation(Canvas canvas, int icon, int tempNow, int tempTomorrow, int width, int ofsetY){
+            Resources resources = MyWatchFace.this.getResources();
+            int weather_icon_size = (int)resources.getDimension(R.dimen.weather_icon_size);
 
+            String temperatureStr = String.format("%d \u00b0 %d \u00b0", tempNow, tempTomorrow);
+
+            Rect bounds = new Rect();
+            mDateTextPaint.getTextBounds(temperatureStr, 0, temperatureStr.length(), bounds);
+
+            int marginLeft = (width - (weather_icon_size + 10 + bounds.width()))/2;
+
+            Drawable d = ContextCompat.getDrawable(getBaseContext(), icon);
+            d.setBounds(marginLeft, (int)ofsetY, marginLeft + weather_icon_size, (int)ofsetY + weather_icon_size);
+            d.draw(canvas);
+
+            canvas.drawText(temperatureStr, marginLeft + weather_icon_size + 10, ofsetY + weather_icon_size, mDateTextPaint);
+
+
+
+        }
 
         private void drawSeparatingLine(Canvas canvas, float yOffset, int lineLength, int screenWidth){
 
             int lineStartX = (screenWidth - lineLength) / 2;
-
             canvas.drawLine(lineStartX, yOffset, lineStartX + lineLength, yOffset, mDateTextPaint);
+
+
+
 
         }
 
@@ -315,8 +344,8 @@ public class MyWatchFace extends CanvasWatchFaceService {
             mDateTextPaint.setTextSize(initTextSize);
             text_width =  bounds.width();
 
-            Log.i("Sunshinewatch", String.format("AvailableSpace: %d", availableSpace));
-            Log.i("Sunshinewatch", String.format("Text width: %d", text_width));
+            //Log.i("Sunshinewatch", String.format("AvailableSpace: %d", availableSpace));
+            //Log.i("Sunshinewatch", String.format("Text width: %d", text_width));
 
             return new Pair<Integer, Float>((int)(DateTextMinMargin + (availableSpace - text_width) / 2),textSize);
         }
