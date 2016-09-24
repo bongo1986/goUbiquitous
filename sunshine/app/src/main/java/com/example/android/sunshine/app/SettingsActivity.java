@@ -50,6 +50,9 @@ public class SettingsActivity extends PreferenceActivity
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_location_key)));
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_units_key)));
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_art_pack_key)));
+
+        Intent intent = new Intent(this, WearableDataSyncService.class);
+        startService(intent);
     }
 
     // Registers a shared preference change listener that gets notified when preferences change

@@ -50,5 +50,8 @@ public class DetailActivity extends AppCompatActivity {
             // Being here means we are in animation mode
             supportPostponeEnterTransition();
         }
+
+        Intent intent = new Intent(this, WearableDataSyncService.class);
+        startService(intent);
     }
 }
